@@ -1,9 +1,21 @@
 # import database module
-
+from database import DB, read_csv, Table
 # define a funcion called initializing
 
+
 def initializing():
-    pass
+
+    persons = read_csv('persons.csv')
+    login = read_csv('login.csv')
+    persons_table = Table('persons', persons)
+    login_table = Table('login', [login])
+
+    my_DB = DB()
+    my_DB.insert(persons_table)
+    my_DB.insert(login_table)
+
+    return my_DB
+
 
 # here are things to do in this function:
 
@@ -18,8 +30,7 @@ def initializing():
 
 # define a funcion called login
 
-def login():
-    pass
+def login(self, my_DB):
 
 # here are things to do in this function:
    # add code that performs a login task
@@ -59,3 +70,4 @@ val = login()
 
 # once everyhthing is done, make a call to the exit function
 exit()
+
