@@ -12,19 +12,16 @@ with open(os.path.join(__location__, 'persons.csv')) as f:
         persons.append(dict(r))
 print(persons)
 
-class read_csv:
-    def __init__(self, file):
-        self.file = file
+def read_csv(name):
+    __location__ = os.path.realpath(
+        os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
-    def read(self):
-        __location__ = os.path.realpath(
-            os.path.join(os.getcwd(), os.path.dirname(__file__)))
-
-        file = []
-        with open(os.path.join(__location__, f'{self.file}')) as f:
-            rows = csv.DictReader(f)
-            for r in rows:
-                file.append(dict(r))
+    file = []
+    with open(os.path.join(__location__, f'{name}')) as f:
+        rows = csv.DictReader(f)
+        for r in rows:
+            file.append(dict(r))
+        return file
 
 class create_csv:
     def __init__(self, file):
@@ -94,6 +91,11 @@ class Table:
                     dict_temp[key] = item1[key]
             temps.append(dict_temp)
         return temps
+
+    def update(self, primary_attribute, update_attribute):
+        for item in self.table:
+            item[primary_attribute] = update_attribute
+
 
 # add in code for a Database class
 
