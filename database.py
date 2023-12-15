@@ -12,20 +12,32 @@ with open(os.path.join(__location__, 'persons.csv')) as f:
         persons.append(dict(r))
 print(persons)
 
+
 def read_csv(name):
     __location__ = os.path.realpath(
         os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
     file = []
-    with open(os.path.join(__location__, f'{name}')) as f:
+    with open(os.path.join(__location__, name)) as f:
         rows = csv.DictReader(f)
         for r in rows:
             file.append(dict(r))
         return file
 
+
 class create_csv:
-    def __init__(self, file):
-        self.file = file
+    def __init__(self, name, head, table_name):
+        self.name = name
+        self.head = head
+        self.table = DB.search(table_name, table_name).table
+
+    def create_csv(self):
+        _myFile = open(self.name, 'w')
+        writer = csv.writer(_myFile)
+        writer.writerow(self.head)
+        for item in self.table:
+            writer.writerow(item.values())
+        _myFile.close()
 
 class DB:
     def __init__(self):
