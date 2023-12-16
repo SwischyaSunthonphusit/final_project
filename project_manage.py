@@ -300,27 +300,15 @@ class Leader:
             create_project(self.id)
 
         elif choice == 3:
-            print('1. Check your message'
-                  '2. Sent a message')
-            message_choice = int(input('Select: '))
-            if message_choice == 1:
-                member_request = my_DB.search('member_request_table')
-                member_request.select()
-                print(member_request['to_be_member'])
-                response = input('Do you want to accept or deny the pending? (y/n): ')
-                if response == 'y':
-                    member_request['Response'] = 'y'
-                else:
-                    member_request['Response'] = 'n'
-            elif message_choice == 2:
-                project_table = my_DB.search('project_table')
-                all_project = project_table.filter(lambda x: x['Lead'] == self.id)
-                all_project.select(['Title', 'ProjectID'])
-                for project in all_project:
-                    print(f"{project['ProjectID']}: {project['Title']}")
-                project_id = input('What project you want student to be member of?: ')
-                member_send_request(self.id, project_id)
-                print('Message sent!')
+            project_table = my_DB.search('project_table')
+            all_project = project_table.filter(lambda x: x['Lead'] == self.id)
+            all_project.select(['Title', 'ProjectID'])
+            for project in all_project:
+                print(f"{project['ProjectID']}: {project['Title']}")
+            project_id = input('What project you want student to be member of?: ')
+            member_send_request(self.id, project_id)
+            print('Message sent!')
+
 
         elif choice == 0:
             exit()
