@@ -10,7 +10,6 @@ with open(os.path.join(__location__, 'persons.csv')) as f:
     rows = csv.DictReader(f)
     for r in rows:
         persons.append(dict(r))
-print(persons)
 
 
 def read_csv(name):
@@ -25,19 +24,14 @@ def read_csv(name):
         return file
 
 
-class create_csv:
-    def __init__(self, name, head, table_name):
-        self.name = name
-        self.head = head
-        self.table = DB.search(table_name, table_name).table
+def create_csv(file, head, table):
+    _myFile = open(file, 'w', newline='')
+    writer = csv.DictWriter(_myFile, fieldnames=head)
+    writer.writeheader()
+    for row in table:
+        writer.writerow(row)
+    _myFile.close()
 
-    def create_csv(self):
-        _myFile = open(self.name, 'w')
-        writer = csv.writer(_myFile)
-        writer.writerow(self.head)
-        for item in self.table:
-            writer.writerow(item.values())
-        _myFile.close()
 
 class DB:
     def __init__(self):
@@ -104,10 +98,12 @@ class Table:
             temps.append(dict_temp)
         return temps
 
-    def update(self, primary_attribute, update_attribute):
+    def update(self, key, update_attribute):
         for item in self.table:
-            item[primary_attribute] = update_attribute
+            item[key] = update_attribute
 
+    def insert(self, my_dict):
+        self.table.append(my_dict)
 
 # add in code for a Database class
 
