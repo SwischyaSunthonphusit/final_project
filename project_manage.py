@@ -290,8 +290,11 @@ class Leader:
         if choice == 1:
             project_title = find_project(self.id).select("Title")
             project_id = find_project(self.id).select("ProjectID")
-            print(f'{project_id}: {project_title}')
+            for _id in project_id:
+                for title in project_title:
+                    print(f'{_id}: {title}')
             project_id = int(input('Select project id you want to modify:'))
+
 
         elif choice == 2:
             create_project(self.id)
