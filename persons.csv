@@ -1,9 +1,9 @@
-ID,fist,last,type
+ID,first,last,type
 7447677,Cristiano,Ronaldo,admin
-9898118,Lionel,Messi,student
-5662557,Manuel,Neuer,student
-5687866,Robert,Lewandowski,student
-3557832,Gareth,Bale,student
+9898118,Lionel	,Messi	,student
+5662557,Manuel,Neuer	,student
+5687866,Robert,Lewandowski	,student
+3557832,Gareth,Bale	,student
 2592572,Thibaut,Courtois,student
 1554306,Eden,Hazard,student
 4788888,Thiago,Silva,student

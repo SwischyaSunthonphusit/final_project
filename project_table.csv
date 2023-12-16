@@ -1,1 +1,3 @@
-ProjectID,Lead,Title,Member1,Member2,Advisor,Status
+ProjectID,Title,Leader,Content,Member1,Member2,Advisor,Status
+1234,ii,9898118,iiii,None,None,None,Pending
+1221,ee,9898118,ee,None,None,None,Pending

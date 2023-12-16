@@ -28,7 +28,7 @@ def create_csv(file, head, table):
     _myFile = open(file, 'w', newline='')
     writer = csv.DictWriter(_myFile, fieldnames=head)
     writer.writeheader()
-    for row in table:
+    for row in table.table:
         writer.writerow(row)
     _myFile.close()
 
@@ -99,8 +99,8 @@ class Table:
         return temps
 
     def update(self, key, update_attribute):
-        for item in self.table:
-            item[key] = update_attribute
+        for row in self.table:
+            row[key] = update_attribute
 
     def insert(self, my_dict):
         self.table.append(my_dict)
