@@ -76,29 +76,30 @@
  ## missing features and outstanding bugs
 
  - Late Commit
-1.line 549 : Class Leader (late commit)
+
+1. line 549 : Class Leader (late commit)
       - if advice from advisor == None : Project is successfull and no correction is required.
       
-2.line 683 : Class Member (late commit)
+2. line 683 : Class Member (late commit)
       - if advice from advisor == None : Project is successfull and no correction is required.
 
-3.line 77 : def Member_send_request() (late commit)
+3. line 77 : def Member_send_request() (late commit)
       - make input member ID function properly.
 
-4.line 634 - 639 : Class Member (late commit)
+4. line 634 - 639 : Class Member (late commit)
       - when select 'Project'choice, system display member project brief correctly.
 
-5.line 864 : Class Advisor (late commit)
+5. line 864 : Class Advisor (late commit)
     - If advisor score project is 10, project_evaluate table status update to 'Finished'.
 
 - Outstanding bug
-1.Enter 0 more than 1 time to exit program (maybe n to deny function): (program problem).
+1. Enter 0 more than 1 time to exit program (maybe n to deny function): (program problem).
       - In this case, it's not a bug but my program has some problem, so maybe sometimes in some function, you have to enter 0 or 'n' more than 1 time to exit program.
 
-2.line 872: def evaluate_project() : Error 'list index out of range'.
+2. line 872: def evaluate_project() : Error 'list index out of range'.
       - trying to print(f'Your evaluation for {project_info[0]['Title']} is finished!').
 
-3.line 757-770: def faculty_check_message(): .
+3. line 757-770: def faculty_check_message(): .
       for choice 'n' : Error 'list indices must be integers or slices, not str'.
       - trying to print(f'you deny {lead_id}: {search_project(lead_id)["Title"]} project!').
       for choice 'y' : program exit automatically.
