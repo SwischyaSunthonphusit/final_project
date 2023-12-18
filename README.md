@@ -18,5 +18,8 @@
 - try to run by input your username and password
 
 ## Detailed Table
+ |     Role        |      Action     |      Method     |      Class      | Completion percentage  |
+ | --------------- | --------------- | --------------- | --------------- | ---------------------- | 
+ | Admin           |Manage account in database (update ID/username/password/role) | manage_account (update) | Admin | 100%
+ 
 
-I-----------I--------I--------I
