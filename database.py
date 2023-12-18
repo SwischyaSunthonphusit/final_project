@@ -101,7 +101,7 @@ class Table:
     def update(self, key, update_attribute):
         for row in self.table:
             row[key] = update_attribute
-            print(666, row)
+
 
     def insert(self, my_dict):
         self.table.append(my_dict)

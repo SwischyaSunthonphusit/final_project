@@ -60,26 +60,28 @@ def find_person(_id):
     return person_info
 
 
-def is_member_in_group(self):
-    pass
-    # project_table = my_DB.search('project_table')
-    # project = project_table.select(['ProjectID', 'Title', 'Lead', 'Member1', 'Member2', 'Advisor', 'Status'])
-    # print(project)
-    # # for member in project:
-    #     if self.id == member:
-    #         for member2 in project2:
-    #             if self.id == member2:
-    #                 return True
-    # return False
-
-
 def member_send_request(_id, project_id):
-    person = my_DB.search('persons')
+    persons = my_DB.search('persons')
     _login = my_DB.search('login')
+    students_id = _login.filter(lambda x: x['role'] == 'student').select(['ID', 'username'])
+    students_info = persons.filter(lambda x: x['ID'] == students_id)
+    print("[----Students that still can be a member----]")
+    print("---ID---     ---username---     ---role---")
+    for student_id in students_id:
+        print(f"{student_id['ID']} {student_id['username']:>15} {'Student':>17}")
     to_member_id = int(input("Member's ID you want to send a request: "))
+    if to_member_id == _login.filter(lambda x: x['role'] == 'member').select(['ID']):
+        print('This student is already became a member for other project! Please select new student ID')
+        to_member_id = int(input("Member's ID you want to send a request: "))
+    for student_id in students_id:
+        print(students_id)
+        print(student_id['ID'])
+        if str(to_member_id) not in str(students_id['ID']):
+            print('Invalid ID, please try again')
+            to_member_id = int(input("Member's ID you want to send a request: "))
+
     current_time = datetime.now()
-    person_info = person.filter(lambda x: x['ID'] == to_member_id)
-    print(person_info)
+    person_info = persons.filter(lambda x: x['ID'] == str(to_member_id))
     if person_info.table:
         new_message = {'ProjectID': project_id,
                        'to_be_member': str(to_member_id),
@@ -90,16 +92,32 @@ def member_send_request(_id, project_id):
                        }
         member_request = my_DB.search('member_request')
         member_request.insert(new_message)
-        print(f"Message send to {person_info[0]['first']} {person_info[0]['last']}.")
+        print(f"Message send successfully.")
+        print('------------')
     else:
         print('Invalid ID')
 
 
 def advisor_request(_id, project_id):
-    to_advisor_id = int(input("Advisor's ID you want to send a request: "))
+    person = my_DB.search('persons')
+    persons = my_DB.search('persons')
+    _login = my_DB.search('login')
+    advisors_id = _login.filter(lambda x: x['role'] == 'faculty').select(['ID', 'username'])
+    print("[----Faculty that still can be advisor----]")
+    print("---ID---     ---username---     ---role---")
+    for advisor_id in advisors_id:
+        print(f"{advisor_id['ID']} {advisor_id['username']:>15} {'Faculty':>17}")
+
+    to_advisor_id = input("Advisor's ID you want to send a request: ")
+    if to_advisor_id == _login.filter(lambda x: x['role'] == 'advisor').select(['ID']):
+        print('This faculty is already became an advisor for other project! Please select new faculty ID')
+        to_advisor_id = int(input("Advisor's ID you want to send a request: "))
+
+    person_info = person.filter(lambda x: x['ID'] == str(to_advisor_id))
+    print(person_info.table)
     current_time = datetime.now()
     _login = my_DB.search('login')
-    if _login.filter(lambda x: x['ID'] == to_advisor_id).table:
+    if person_info.table:
         new_message = {'ProjectID': project_id,
                        'to_be_advisor': to_advisor_id,
                        'From': _id,
@@ -108,6 +126,8 @@ def advisor_request(_id, project_id):
                        }
         advisor_request = my_DB.search('advisor_request')
         advisor_request.insert(new_message)
+        print(f"Message send successfully!.")
+        print('------------')
     else:
         print('Invalid ID')
 
@@ -132,11 +152,11 @@ def append_advisor(lead_id, _id):
     if lead_project['Advisor'] == 'None':
         lead_project['Advisor'] = _id
         return True
-    print("This project's member is already full! Please select another project")
     return False
 
 
 def create_project(_id):
+    print('---Create Project---')
     title = input('Project Title: ')
     content = input('Project Content: ')
     project_id = random.randint(0000, 9999)
@@ -151,10 +171,18 @@ def create_project(_id):
                    }
     my_DB.search('project_table').insert(new_project)
     _login = my_DB.search('login')
+    persons = my_DB.search('persons')
     _login.filter(lambda x: x['ID'] == _id).update('role', 'leader')
 
     mem_choice = input('Do you want to send pending message to any student? [y/n]: ')
     if mem_choice == 'y':
+        students_id = _login.filter(lambda x: x['role'] == 'student')
+        students_info = persons.filter(lambda x: x['ID'] == students_id)
+        print("[----Students that still can be a member----]")
+        print("---ID---  ---first name--- ---last name--- ---role---")
+        for student_id in students_id.table:
+            for student_info in students_info.table:
+                print(f"{student_id['role']} {student_info['first']} {student_info['last']} Student")
         member_send_request(_id, project_id)
 
     adv_choice = input('Do you want to send pending message to any advisor? [y/n]: ')
@@ -184,23 +212,166 @@ def exit():
                my_DB.search('project_evaluate'))
 
 
-# class Admin:
-#
-#     def __init__(self):
-#         self.project_id = 0
-#         self.member1 = 0
-#         self.member2 = 0
-#         self.advisor = 0
-#
-#     def choice_admin(self):
-#         print(f'Welcome!'
-#               f'1. ')
-#
-#
-#     def remove_person(self):
-#         remove_id = int(input("Person's ID you want to remove: "))
-#         persons = my_DB.search('persons')
-#         Setup.find_person()
+class Admin:
+
+    def __init__(self):
+        self.id = 0
+        self.username = str
+        self.password = 0
+        self.role = str
+
+    def admin_choice(self):
+        print(f'Welcome! \n'
+              f'Your role is Admin \n'
+              f'What do you want to do? \n'
+              f'1. Database \n'
+              f'0. Exit')
+        choice = int(input('Select:'))
+        while 0 < choice > 1:
+            print('Invalid choice, Please select again.')
+            choice = int(input('Select:'))
+
+        if choice == 1:
+            print('1. Manage account \n'
+                  '2. Create new account \n'
+                  '3. Remove account')
+            choice = int(input('Select: '))
+            if choice == 1:
+                self.manage_account()
+                self.admin_choice()
+            if choice == 2:
+                self.create_account()
+                self.admin_choice()
+            if choice == 3:
+                self.remove_account()
+                self.admin_choice()
+
+        if choice == 0:
+            exit()
+
+    def manage_account(self):
+        _login = my_DB.search('login')
+        print("---ID---   ---username---  ---password---  ------role------")
+        for person_login in _login.table:
+            print(f"{person_login['ID']:<10} {person_login['username']:<10} {person_login['password']:>15} {person_login['role']:>15}")
+        self.id = input('Select Person ID: ')
+        persons = my_DB.search('persons')
+        persons = persons.filter(lambda x: x['ID'] == self.id)
+        login = _login.filter(lambda x: x['ID'] == self.id)
+        for login_ in login.table:
+            self.username = login_['username']
+            self.password = login_['password']
+            self.role = login_['role']
+        for person in persons.table:
+            first = person["first"]
+            last = person["last"]
+            print(f'What do you want to do with {first} {last} \n'
+                  f'1. ID \n'
+                  f'2. Username \n'
+                  f'3. Password \n'
+                  f'4. Role \n'
+                  f'0. Reselect account ID')
+            choice = int(input('Select number: '))
+            while 0 < choice > 4:
+                print('Invalid choice, Please select again.')
+                choice = int(input('Select number: '))
+            if choice == 1:
+                print(f"{person['first']} ID: {self.id}")
+                change_id = input(f'Input new ID for {person["first"]}: ')
+                person.update('ID', change_id)
+                login.update('ID', change_id)
+                self.admin_choice()
+
+            if choice == 2:
+                print(f"{person['first']} username: {self.username}")
+                change_user = input(f'Input new username for {person["first"]}: ')
+                login.update('username', change_user)
+                self.admin_choice()
+
+            if choice == 3:
+                print(f"{person['first']} password: {self.password}")
+                change_pass = input(f'Input new password for {person["first"]}: ')
+                login.update('password', change_pass)
+                self.admin_choice()
+
+            if choice == 4:
+                print(f"{person['first']} role: {self.role}")
+                change_role = input(f'Input new role for {person["first"]} [student/faculty]: ')
+                login.update('role', change_role)
+                self.admin_choice()
+
+            if choice == 0:
+                self.manage_account()
+
+    def create_account(self):
+        persons = my_DB.search('persons')
+        _login = my_DB.search('login')
+        print('---Create New Account---')
+        self.username = input('New Username: ')
+        self.password = input('New Password: ')
+        if len(self.password) != 4:
+            print('Invalid password, please create new password')
+            self.password = input('New Password: ')
+        self.role = input('New Role [Student/Faculty]: ')
+        if self.role != 'Student' and 'Faculty':
+            print('Invalid role, please enter role again')
+            self.role = input('New Role: ')
+        self.id = random.randint(1111111, 9999999)
+        account_id = _login.filter(lambda x: x['ID'] == id)
+        for _id in account_id.table:
+            if _id == self.id:
+                self.id = random.randint(1111111, 9999999)
+
+        first = input('First name: ')
+        last = input('Last name: ')
+
+        new_person = {'ID': self.id,
+                      'first': first,
+                      'last': last,
+                      'type': self.role
+                      }
+        print(type(persons))
+        persons.insert(new_person)
+
+        new_account = {'ID': self.id,
+                       'username': self.username,
+                       'password': self.password,
+                       'role': self.role
+                       }
+        print(type(_login))
+        _login.insert(new_account)
+
+        print(f'Create new account Successful! \n'
+              f'ID: {self.id} \n'
+              f'username: {self.username} \n'
+              f'password: {self.password} \n'
+              f'role: {self.role}')
+
+    def remove_account(self):
+        _login = my_DB.search('login')
+        print("---ID---   ---username---  ---password---  ------role------")
+        for person_login in _login.table:
+            print(f"{person_login['ID']:<10} {person_login['username']:<10} {person_login['password']:>15} "
+                  f"{person_login['role']:>15}")
+        self.id = input('Input user ID you want to remove: ')
+        _login = my_DB.search('login')
+        persons = my_DB.search('persons')
+        project = my_DB.search('project_table')
+        in_project_id_stu = project.filter(lambda x: x['Leader'] == self.id or x['Member1'] == self.id or x['Member2']
+                                                     == self.id)
+        if in_project_id_stu.table:
+            print("Can't delete this account, student still modify their project")
+        in_project_id_fac = project.filter(lambda x: x['Advisor'] == self.id)
+        if in_project_id_fac.table:
+            print("Can't delete this account, advisor still have to evaluate student's project")
+
+        for i in range(len(_login.table)):
+            if _login.table[i]['ID'] == self.id:
+                if persons.table[i]['ID'] == self.id:
+                    del _login.table[i]
+                    del persons.table[i]
+                    print(f'Remove {self.id} successfully!')
+                    break
 
 
 class Student:
@@ -233,9 +404,9 @@ class Student:
         member_request = my_DB.search('member_request')
         tobe_member = member_request.filter(lambda x: x['to_be_member'] == self.id)
         for member in tobe_member.table:
-            print(member['to_be_member'])
             if self.id == member['to_be_member']:
                 print("You haven't deny all member pending request.")
+                print('------------')
                 self.choice_student()
         create_project(self.id)
         Leader(self.id).leader_choice()
@@ -256,8 +427,8 @@ class Student:
             Student.choice_student(val[0])
         for row in request.table:
             project = project_table.filter(lambda x: x['ProjectID'] == row['ProjectID']).table
-            print(f"message from: {row['From']} \n"
-                  f"Project: {project[0]['Title']}")
+            print(f"ProjectID: {row['ProjectID']} \n"
+                  f"message from: {row['From']}")
         self.lead_id = input("Input leader's ID you want to respond: ")
         project_id = project_table.filter(lambda x: x['Leader'] == self.lead_id).table[0]['ProjectID']
         leader_pending = mem_request.filter(lambda x: x['From'] == self.lead_id)
@@ -269,17 +440,17 @@ class Student:
 
         if choice == 'y':
             leader_pending.update('Response', 'y')
-            append_member(self.lead_id, self.id, project_id)
+            append_member(self.lead_id, self.id)
             person = my_DB.search('persons')
             _login = my_DB.search('login')
             __login = _login.filter(lambda x: x['ID'] == self.id)
             __login.update('role', 'member')
             mem_request.filter(lambda x: x['to_be_member'] == self.id).filter(lambda x: x['Response'] == 'None')\
-                .update('Response', 'n')
+                .update('Response', 'y')
             project_name = project_table.filter(lambda x: x["Leader"] == self.lead_id).table[0]["Title"]
             print(f'You are member of {self.lead_id}: {project_name} project!')
             print('------------')
-            Student(self.id).choice_student()
+            Member(self.id, self.lead_id).member_choice()
 
         elif choice == 'n':
             leader_pending.update('Response', 'n')
@@ -299,29 +470,71 @@ class Leader:
               f'Your role now is Leader. \n'
               f'What do you want to do? \n'
               f'1. Project \n'
-              f'2. Create Project \n'
-              f'3. Message \n'
-              f'4. See score and advice from advisor \n'
+              f'2. Message \n'
+              f'3. See score and advice from advisor \n'
               f'0. exit')
         choice = int(input('Select: '))
-        project_table = my_DB.search('project_table')
-        # project_table.filter(lambda x: x['Leader'] == self.id)
+        while 0 < choice > 3:
+            print('Invalid choice, Please select again.')
+            choice = int(input('Select: '))
+        if choice == 0:
+            exit()
 
         if choice == 1:
-            self.leader_check_project()
-        elif choice == 2:
-            create_project(self.id)
-            Leader(self.id).leader_choice()
-        elif choice == 3:
+            project_table = my_DB.search('project_table')
             for i in project_table.filter(lambda x: x['Leader'] == self.id).table:
                 print(f"Project ID: {i['ProjectID']} Title: {i['Title']:2>}")
-            _project_id = int(input('Select project ID you want to send a member request: '))
-            member_send_request(self.id, _project_id)
-            Leader(self.id).leader_choice()
-        elif choice == 4:
+                print('1. View your project detail \n'
+                      '0. Return to menu')
+                self.project_id = i['ProjectID']
+            choice = int(input('Select your choice: '))
+            while choice != 1 and choice != 0:
+                print('Invalid choice, Please select again.')
+                choice = int(input('Select your choice: '))
+            if choice == 1:
+                self.project_info()
+                print('1. Modify this project \n'
+                      '0. Return to menu')
+                choice = int(input('Select your choice: '))
+                while choice != 1 and choice != 0:
+                    print('Invalid choice, Please select again.')
+                    choice = int(input('Select your choice: '))
+
+                if choice == 1:
+                    self.leader_check_project()
+                if choice == 0:
+                    self.leader_choice()
+            if choice == 0:
+                self.leader_choice()
+
+        elif choice == 2:
+            print('1. Send message to student. \n'
+                  '2. Send message to advisor \n'
+                  '0. Return to menu')
+            choice = int(input('Select your choice: '))
+            while 0 < choice > 2:
+                print('Invalid choice, Please select again.')
+                choice = int(input('Select your choice: '))
+            if choice == 1:
+                project_table = my_DB.search('project_table')
+                for i in project_table.filter(lambda x: x['Leader'] == self.id).table:
+                    print(f"Project ID: {i['ProjectID']} Title: {i['Title']:2>}")
+                _project_id = int(input('Select project ID you want to send a member request: '))
+                member_send_request(self.id, _project_id)
+                Leader(self.id).leader_choice()
+            if choice == 2:
+                project_table = my_DB.search('project_table')
+                for i in project_table.filter(lambda x: x['Leader'] == self.id).table:
+                    print(f"Project ID: {i['ProjectID']} Title: {i['Title']:2>}")
+                _project_id = int(input('Select project ID you want to send a advisor request: '))
+                advisor_request(self.id, _project_id)
+                Leader(self.id).leader_choice()
+
+            if choice == 0:
+                self.leader_choice()
+
+        if choice == 3:
             self.see_evaluate()
-        elif choice == 0:
-            exit()
 
     def see_evaluate(self):
         project_evaluate = my_DB.search('project_evaluate')
@@ -332,8 +545,7 @@ class Leader:
             Leader(self.id).leader_choice()
         project = my_DB.search('project_table')
         project_table = project.filter(lambda x: x['Leader'] == self.id).table
-        print(project_evaluate)
-        if project_evaluate['Score'] == 10:
+        if project_evaluate[0]['Score'] == 10:
             print('You have full score for your project! This project is finished')
         print(f"---Score and Advice--- \n"
               f"ProjectID: {project_evaluate[0]['ProjectID']} \n"
@@ -342,6 +554,7 @@ class Leader:
               f"Advice from advisor: {project_evaluate[0]['Advice']}")
         choice = input('Do you want to rectify this project? [y/n]: ')
         if choice == 'y':
+            self.project_id = project_evaluate[0]['ProjectID']
             self.leader_check_project()
         elif choice == 'n':
             print('------------')
@@ -349,44 +562,65 @@ class Leader:
 
     def leader_check_project(self):
         project_table = my_DB.search('project_table')
-        for i in project_table.filter(lambda x: x['Leader'] == self.id).table:
-            print(f"Project ID: {i['ProjectID']} Title: {i['Title']:2>}")
-        _project_id = int(input('Select project id you want to modify:'))
-
         print('What do you want to do with this project? \n'
               '1. Rename Title \n'
               '2. Modify Content \n'
               '3. Finished this Project \n'
               '0. Return to menu')
-        choice = int(input('Select: '))
+        choice = int(input('Select your choice: '))
         if choice == 1:
             new_title = input('New title name: ')
-            for project in project_table.filter(lambda x: x['ProjectID'] == str(_project_id)).table:
-                project.update('Title', new_title)
+            projects = project_table.filter(lambda x: x['ProjectID'] == str(self.project_id))
+            projects.update('Title', new_title)
             print('Your title update successfully.')
             print('------------')
             Leader(self.id).leader_choice()
         if choice == 2:
             new_content = input('New Content: ')
-            for project in project_table.filter(lambda x: x['ProjectID'] == str(_project_id)).table:
-                project.update('Content', new_content)
+            projects = project_table.filter(lambda x: x['ProjectID'] == str(self.project_id))
+            print(self.project_id)
+            projects.update('Content', new_content)
+            print(projects.table)
             print('Your content update successfully.')
             print('------------')
             Leader(self.id).leader_choice()
         if choice == 3:
-            for project in project_table.filter(lambda x: x['ProjectID'] == str(_project_id)).table:
-                project.update('Status', 'Pending')
+            projects = project_table.filter(lambda x: x['ProjectID'] == str(self.project_id))
+            for project in projects.table:
+                if project['Advisor'] == 'None':
+                    print("You have no advisor! Please send a message to ask faculty to be your advisor first.")
+                    print('-------')
+                    self.leader_check_project()
+                if project['Member1'] == 'None' or ['Member2'] == 'None':
+                    print("You have not enough member! Please send a message to ask student to be your member first.")
+                    print('-------')
+                    self.leader_check_project()
+                project['Status'] = 'Pending'
             print('Your project is finished! this project will automatically pending for advisor evaluation.')
             print('------------')
             Leader(self.id).leader_choice()
         if choice == 0:
             Leader(self.id).leader_choice()
 
+    def project_info(self):
+        project_table = my_DB.search('project_table')
+        my_project = project_table.filter(lambda x: x['Leader'] == self.id).table
+        print(f"----Project Detail---- \n"
+              f"ProjectID: {my_project[0]['ProjectID']} \n"
+              f"Title: {my_project[0]['Title']} \n"
+              f"Content: {my_project[0]['Content']} \n"
+              f"Leader: {my_project[0]['Leader']} \n"
+              f"Member1: {my_project[0]['Member1']} \n"
+              f"Member2: {my_project[0]['Member2']} \n"
+              f"Advisor: {my_project[0]['Advisor']} \n"
+              f"Status: {my_project[0]['Status']}")
+
 
 class Member:
     def __init__(self, id, lead_id):
         self.id = id
         self.lead_id = lead_id
+        self.project_id = 0
 
     def member_choice(self):
         print(f'Welcome! \n'
@@ -395,28 +629,50 @@ class Member:
               f'1. Project \n'
               f'2. See score and advice for your project\n'
               f'0. Exit')
-        choice = int(input('Select: '))
+        choice = int(input('Select your choice: '))
         while 0 < choice > 2:
             print('Invalid choice, Please select again.')
-            choice = int(input('Select: '))
+            choice = int(input('Select your choice: '))
         if choice == 1:
-            self.member_check_project()
-        elif choice == 2:
+            project_table = my_DB.search('project_table')
+            for i in project_table.filter(lambda x: x['Leader'] == self.id).table:
+                print(f"Project ID: {i['ProjectID']} Title: {i['Title']:2>}")
+                self.project_id = i['ProjectID']
+
+            print('1. View your project detail \n'
+                  '0. Return to menu')
+            choice = int(input('Select your choice: '))
+            while choice != 0 and choice != 1:
+                print('Invalid choice, Please select again.')
+                choice = int(input('Select your choice: '))
+            if choice == 1:
+                self.project_info()
+                print('1. Modify this project \n'
+                      '0. Return to menu')
+                choice = int(input('Select your choice: '))
+                while choice != 0 and choice != 1:
+                    print('Invalid choice, Please select again.')
+                    choice = int(input('Select your choice: '))
+                if choice == 1:
+                    self.member_check_project()
+                if choice == 0:
+                    self.member_choice()
+            if choice == 0:
+                self.member_choice()
+
+        if choice == 2:
             self.see_evaluate()
-        elif choice == 0:
+        if choice == 0:
             exit()
 
     def member_check_project(self):
         project_table = my_DB.search('project_table')
-        print(type(project_table))
         project = project_table.filter(lambda x: x['Member1'] == self.id or x['Member2'] == self.id)
         for i in project.table:
-            print(f"Project ID: {i['ProjectID']} Title: {i['Title']:2>}")
-
-        _project_id = int(input('Select project id you want to modify:'))
+            print(f"Project ID: {i['ProjectID']} Title: {i['Title']:2>} \n"
+                  f"Content: {i['Content']}")
+            _project_id = i['ProjectID']
         new_content = input('New Content: ')
-        print(type(project.filter(lambda x: x['ProjectID'] == str(_project_id))))
-        print(project.filter(lambda x: x['ProjectID'] == str(_project_id)))
         project.filter(lambda x: x['ProjectID'] == str(_project_id)).update('Content', new_content)
         print(f'You finished update content!')
         self.member_choice()
@@ -440,6 +696,18 @@ class Member:
             print('------------')
             self.member_choice()
 
+    def project_info(self):
+        project_table = my_DB.search('project_table')
+        my_project = project_table.filter(lambda x: x['Member1'] == self.id or x['Member2'] == self.id).table
+        print(f"----Project Detail---- \n"
+              f"ProjectID: {my_project[0]['ProjectID']} \n"
+              f"Title: {my_project[0]['Title']:<10} \n"
+              f"Leader: {my_project[0]['Leader']:<10} \n"
+              f"Content: {my_project[0]['Content']:<10} \n"
+              f"Member1: {my_project[0]['Member1']:<10} \n"
+              f"Member2: {my_project[0]['Member2']:<10} \n"
+              f"Advisor: {my_project[0]['Advisor']:<10} \n"
+              f"Status: {my_project[0]['Status']:<10}")
 
 
 class Faculty:
@@ -452,7 +720,10 @@ class Faculty:
               f'What do you want to do? \n'
               f'1. Message \n'
               f'0. Exit')
-        choice = int(input('Select: '))
+        choice = int(input('Select your choice: '))
+        while choice != 0 and choice != 1:
+            print('Invalid choice, Please select again.')
+            choice = int(input('Select your choice: '))
         if choice == 1:
             self.faculty_check_message()
         elif choice == 0:
@@ -490,7 +761,6 @@ class Faculty:
                     Advisor(self.id).advisor_choice()
             elif choice == 'n':
                 leader_pending.update('Response', 'n')
-                print(search_project(lead_id))
                 print(f'you deny {lead_id}: {search_project(lead_id)["Title"]} project!')
                 self.faculty_choice()
 
@@ -505,17 +775,33 @@ class Advisor:
               f'Your role now is Advisor. \n'
               f'What do you want to do? \n'
               f'1. Check Project\n'
+              f'2. Evaluate Project'
               f'0. Exit')
-        choice = int(input('Select: '))
+        choice = int(input('Select your choice: '))
+        while choice != 0 and choice != 1 and choice != 2:
+            print('Invalid choice, Please select again.')
+            choice = int(input('Select your choice: '))
         if choice == 1:
             self.advisor_check_project()
+        if choice == 2:
+            project_table = my_DB.search('project_table')
+            advisor_project = project_table.filter(lambda x: x['Advisor'] == self.id) \
+                .filter(lambda x: x['Status'] == 'Pending' and x['Member1'] != 'None' and x['Member2'] != 'None')
+            for i in advisor_project.table:
+                print(f"ProjectID: {i['ProjectID']} Title: {i['Title']}")
+            self.project_id = input('Select project ID you want to evaluate (select 0 if you want to return to menu): ')
+            if self.project_id == '0':
+                print('------------')
+                self.advisor_choice()
+            self.evaluate_project()
+
         if choice == 0:
             exit()
 
     def advisor_check_project(self):
         project_table = my_DB.search('project_table')
         advisor_project = project_table.filter(lambda x: x['Advisor'] == self.id)\
-            .filter(lambda x: x['Status'] == 'Pending')
+            .filter(lambda x: x['Status'] == 'Pending' and x['Member1'] != 'None' and x['Member2'] != 'None')
         for i in advisor_project.table:
             print(f"ProjectID: {i['ProjectID']} Title: {i['Title']}")
         print('Select Project ID you want to check (select 0 if you want to return to menu)')
@@ -533,9 +819,7 @@ class Advisor:
         if choice == 'n':
             print('This project will still wait for you to evaluate it!')
             print('------------')
-            self.advisor_check_project()
-
-        # copy from leader_check_project
+            self.advisor_choice()
 
     def find_project_advisor(self):
         project_table = my_DB.search('project_table')
@@ -545,21 +829,21 @@ class Advisor:
         return advisor_project
 
     def project_info(self):
-        advisor_project = self.find_project_advisor()
-        print(advisor_project)
-        print(f"[Project Detail] \n"
-              f"Project ID: {advisor_project.table[0]['ProjectID']} \n"
-              f"Title: {advisor_project.table[0]['Title']}\n"
-              f"Lead: {advisor_project.table[0]['Leader']}\n"
-              f"Member1: {advisor_project.table[0]['Member1']}\n"
-              f"Member2: {advisor_project.table[0]['Member2']}\n"
-              f"Status: {advisor_project.table[0]['Status']}\n"
-              f"Content: {advisor_project.table[0]['Content']}")
-        return advisor_project
+        project_table = my_DB.search('project_table')
+        my_project = project_table.filter(lambda x: x['Advisor'] == self.id).table
+        print(f"----Project Detail---- \n"
+              f"ProjectID: {my_project[0]['ProjectID']} \n"
+              f"Title: {my_project[0]['Title']} \n"
+              f"Leader: {my_project[0]['Leader']} \n"
+              f"Content: {my_project[0]['Content']} \n"
+              f"Member1: {my_project[0]['Member1']} \n"
+              f"Member2: {my_project[0]['Member2']} \n"
+              f"Advisor: {my_project[0]['Advisor']} \n"
+              f"Status: {my_project[0]['Status']}")
 
     def evaluate_project(self):
         project = my_DB.search('project_table')
-        project.filter(lambda x: x['status'] == 'Pending').select(['ProjectID'])
+        to_eval_project = project.filter(lambda x: x['Status'] == 'Pending').filter(lambda x: x['Advisor'] == self.id)
         print('----Evaluation----')
         score = input(f'From 1 to 10, what score you think this project should have? '
                       f'(if this project is perfect, please score it 10): ')
@@ -576,6 +860,7 @@ class Advisor:
         if score != 10:
             advice = input('Do you have any advice for leader and member to rectify their project?: ')
             evaluate.update('Advice', advice)
+            to_eval_project.update('Status', 'Unfinished')
         project_info = self. find_project_advisor()
         print(f"Your evaluation for {project_info[0]['Title']} is finished!")
         print('------------')
@@ -597,6 +882,8 @@ else:
         Faculty(val[0]).faculty_choice()
     elif val[1] == 'advisor':
         Advisor(val[0]).advisor_choice()
+    elif val[1] == 'admin':
+        Admin().admin_choice()
 
 
 
