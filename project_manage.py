@@ -216,7 +216,8 @@ class Admin:
         self.role = str
 
     def admin_choice(self):
-        print(f'Welcome! \n'
+        print(f'----MENU----\n'
+              f'Welcome! \n'
               f'Your role is Admin \n'
               f'What do you want to do? \n'
               f'1. Database \n'
@@ -386,14 +387,14 @@ class Student:
             print('Invalid choice, Please select again.')
             choice = int(input('Select: '))
 
-        if choice == 1:
-            self.create_project_student()
-
-        if choice == 2:
-            self.student_check_message()
-
         if choice == 0:
             exit()
+
+        elif choice == 1:
+            self.create_project_student()
+
+        elif choice == 2:
+            self.student_check_message()
 
     def create_project_student(self):
         member_request = my_DB.search('member_request')
@@ -420,38 +421,38 @@ class Student:
             print('You have no message from leader.')
             print('------------')
             Student.choice_student(val[0])
-        for row in request.table:
-            project = project_table.filter(lambda x: x['ProjectID'] == row['ProjectID']).table
-            print(f"ProjectID: {row['ProjectID']} \n"
-                  f"message from: {row['From']}")
-        self.lead_id = input("Input leader's ID you want to respond: ")
-        project_id = project_table.filter(lambda x: x['Leader'] == self.lead_id).table[0]['ProjectID']
-        leader_pending = mem_request.filter(lambda x: x['From'] == self.lead_id)
-        choice = input('deny or accept to be member [y/n]: ')
-        while choice is True:
-            if choice != 'y' or 'n':
-                print('Invalid choice, Please try again.')
-                choice = input('deny or accept to be member [y/n]: ')
+        else:
+            for row in request.table:
+                project = project_table.filter(lambda x: x['ProjectID'] == row['ProjectID']).table
+                print(f"ProjectID: {row['ProjectID']} \n"
+                      f"message from: {row['From']}")
+            self.lead_id = input("Input leader's ID you want to respond: ")
+            leader_pending = mem_request.filter(lambda x: x['From'] == self.lead_id)
+            choice = input('deny or accept to be member [y/n]: ')
+            while choice is True:
+                if choice != 'y' or 'n':
+                    print('Invalid choice, Please try again.')
+                    choice = input('deny or accept to be member [y/n]: ')
 
-        if choice == 'y':
-            leader_pending.update('Response', 'y')
-            append_member(self.lead_id, self.id)
-            person = my_DB.search('persons')
-            _login = my_DB.search('login')
-            __login = _login.filter(lambda x: x['ID'] == self.id)
-            __login.update('role', 'member')
-            mem_request.filter(lambda x: x['to_be_member'] == self.id).filter(lambda x: x['Response'] == 'None')\
-                .update('Response', 'y')
-            project_name = project_table.filter(lambda x: x["Leader"] == self.lead_id).table[0]["Title"]
-            print(f'You are member of {self.lead_id}: {project_name} project!')
-            print('------------')
-            Member(self.id, self.lead_id).member_choice()
+            if choice == 'y':
+                leader_pending.update('Response', 'y')
+                append_member(self.lead_id, self.id)
+                person = my_DB.search('persons')
+                _login = my_DB.search('login')
+                __login = _login.filter(lambda x: x['ID'] == self.id)
+                __login.update('role', 'member')
+                mem_request.filter(lambda x: x['to_be_member'] == self.id).filter(lambda x: x['Response'] == 'None')\
+                    .update('Response', 'y')
+                project_name = project_table.filter(lambda x: x["Leader"] == self.lead_id).table[0]["Title"]
+                print(f'You are member of {self.lead_id}: {project_name} project!')
+                print('------------')
+                Member(self.id).member_choice()
 
-        elif choice == 'n':
-            leader_pending.update('Response', 'n')
-            print(f'you deny {self.lead_id}: {search_project(self.lead_id).select("Title")} project!')
-            print('------------')
-            Student(self.id).choice_student()
+            elif choice == 'n':
+                leader_pending.update('Response', 'n')
+                print(f'you deny {self.lead_id}: {search_project(self.lead_id).select("Title")} project!')
+                print('------------')
+                Student(self.id).choice_student()
 
 
 class Leader:
@@ -461,7 +462,8 @@ class Leader:
         self.project_id = 0
 
     def leader_choice(self):
-        print(f'Welcome! \n'
+        print(f'----MENU----\n'
+              f'Welcome! \n'
               f'Your role now is Leader. \n'
               f'What do you want to do? \n'
               f'1. Project \n'
@@ -472,10 +474,11 @@ class Leader:
         while 0 < choice > 3:
             print('Invalid choice, Please select again.')
             choice = int(input('Select: '))
+
         if choice == 0:
             exit()
 
-        if choice == 1:
+        elif choice == 1:
             project_table = my_DB.search('project_table')
             for i in project_table.filter(lambda x: x['Leader'] == self.id).table:
                 print(f"Project ID: {i['ProjectID']} Title: {i['Title']:2>}")
@@ -517,7 +520,7 @@ class Leader:
                 _project_id = int(input('Select project ID you want to send a member request: '))
                 member_send_request(self.id, _project_id)
                 Leader(self.id).leader_choice()
-            if choice == 2:
+            elif choice == 2:
                 project_table = my_DB.search('project_table')
                 for i in project_table.filter(lambda x: x['Leader'] == self.id).table:
                     print(f"Project ID: {i['ProjectID']} Title: {i['Title']:2>}")
@@ -525,10 +528,10 @@ class Leader:
                 advisor_request(self.id, _project_id)
                 Leader(self.id).leader_choice()
 
-            if choice == 0:
+            elif choice == 0:
                 self.leader_choice()
 
-        if choice == 3:
+        elif choice == 3:
             self.see_evaluate()
 
     def see_evaluate(self):
@@ -620,7 +623,8 @@ class Member:
         self.project_id = 0
 
     def member_choice(self):
-        print(f'Welcome! \n'
+        print(f'----MENU----\n'
+              f'Welcome! \n'
               f'Your role now is Member. \n'
               f'What do you want to do? \n'
               f'1. Project \n'
@@ -715,7 +719,8 @@ class Faculty:
         self.id = id
 
     def faculty_choice(self):
-        print(f'Welcome!\n'
+        print(f'----MENU----\n'
+              f'Welcome!\n'
               f'Your role now is Faculty. \n'
               f'What do you want to do? \n'
               f'1. Message \n'
