@@ -15,7 +15,7 @@
            - In persons.csv file, this file will store similar information with login.csv, but in this persons.csv, it will have first name, last name and instead of username and password.
      
      3.3 member_request.csv : Contains with class Student and Leader.
-           - This CSV file will store member requests by leaders, containing the project ID for the students whom the leader has requested to join. Students can respond to these requests with either an acceptance or denial.
+           - This CSV file will store member requests being send by leaders, containing the project ID for the students whom the leader has requested to join. Students can respond to these requests with either an acceptance or denial.
      
      3.4 advisor_request.csv : Contains with class Faculty and Leader.
            - This CSV file stores information similar to the "member_request.csv" file but is specifically for faculty. It store requests from leaders for faculty to join their projects, and faculty can respond with either acceptance or denial.
@@ -24,7 +24,7 @@
            - The "project_table.csv" file stores information about all projects created by leaders. It includes projectID, title, content, leader's ID, a list of member IDs, advisor's ID, and the project's status.
      
      3.6 project_evaluate.csv : Contains with class Advisor, Leader and Member.
-           - This CSV file is meant for advisors to score and give some advice on leader and members projects. If the score is complete (10 out of 10), the project is done. Otherwise, leader and members must improve the project following the advisor's guidance.\
+           - This CSV file is meant for advisors to score and give some advice on leader and members projects. If the score is complete (10 out of 10), the project is done. Otherwise, leader and members must improve the project following the advisor's guidance.
 
      
 ## Class
@@ -63,7 +63,7 @@
  |Leader|modify their project (rename title)|lead_check_project (update)|Leader|100%|
  |Leader|modify their project (modify content)|lead_check_project (update)|Leader|100%|
  |Leader|modify their project (finished this project (to wait for evaluation from advisor)|lead_check_project (update)|Leader|100%|
- |Leader|Send a message to student to be member|update (for member_request function)|Leader|100%|
+ |Leader|Send a message to student to be member|update (for member_request function)|Leader|95%|
  |Leader|Send a message to faculty to be advisor|update (for advisor_request function)|Leader|100%|
  |Leader|See score and advice from advisor|see_evaluate (search)|Leader|100%|
  |Member|Check project detail|project_info (search)|Member|100%|
@@ -72,3 +72,23 @@
  |Faculty|Check message from leader and accept or deny it (if accept, faculty will became advisor)|faculty_check_message (update)|Faculty|100%|
  |Advisor|Check project detail|project_info (search)|Advisor|100%|
  |Advisor|Evaluate project by giving score and some advice|advisor_check_project > evaluate_project (insert, update)|Advisor|100%|
+
+ ## missing features and outstanding bugs
+
+1.Enter 0 more than 1 time to exit program (maybe n to deny function): (program problem)
+      - In this case, it's not a bug but my program has some problem, so maybe sometimes in some function, you have to enter 0 or 'n' more than 1 time to exit program.
+      
+2.line 549 : Class Leader (late commit)
+      - if advice from advisor == None : Project is successfull and no correction is required.
+      
+3.line 683 : Class Member (late commit)
+      - if advice from advisor == None : Project is successfull and no correction is required.
+
+4.line 77 : def Member_send_request() (late commit)
+      - make input member ID function properly.
+
+5.line 634 - 639 : Class Member (late commit)
+      - when select 'Project'choice, system display member project brief correctly.
+
+6.line 864 : Class Advisor (late commit)
+    - If advisor score project is 10, project_evaluate table status update to 'Finished'.
