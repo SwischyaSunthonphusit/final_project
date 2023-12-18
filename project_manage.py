@@ -51,7 +51,8 @@ def login():
 def search_project(_id):
     project_table = my_DB.search('project_table')
     project_table_filter = project_table.filter(lambda x: x['Leader'] == _id or x['Member1'] == _id or x['Member2'] == _id)
-    return project_table_filter.table[0]
+    print(project_table_filter.table)
+    return project_table_filter.table
 
 
 def find_person(_id):
@@ -73,12 +74,6 @@ def member_send_request(_id, project_id):
     if to_member_id == _login.filter(lambda x: x['role'] == 'member').select(['ID']):
         print('This student is already became a member for other project! Please select new student ID')
         to_member_id = int(input("Member's ID you want to send a request: "))
-    for student_id in students_id:
-        print(students_id)
-        print(student_id['ID'])
-        if str(to_member_id) not in str(students_id['ID']):
-            print('Invalid ID, please try again')
-            to_member_id = int(input("Member's ID you want to send a request: "))
 
     current_time = datetime.now()
     person_info = persons.filter(lambda x: x['ID'] == str(to_member_id))
@@ -545,8 +540,10 @@ class Leader:
             Leader(self.id).leader_choice()
         project = my_DB.search('project_table')
         project_table = project.filter(lambda x: x['Leader'] == self.id).table
-        if project_evaluate[0]['Score'] == 10:
+        if project_evaluate[0]['Advice'] == "None":
             print('You have full score for your project! This project is finished')
+            print('------------')
+            Leader(self.id).leader_choice()
         print(f"---Score and Advice--- \n"
               f"ProjectID: {project_evaluate[0]['ProjectID']} \n"
               f"Title: {project_table[0]['Title']} \n"
@@ -617,9 +614,9 @@ class Leader:
 
 
 class Member:
-    def __init__(self, id, lead_id):
+    def __init__(self, id):
         self.id = id
-        self.lead_id = lead_id
+        self.lead_id = 0
         self.project_id = 0
 
     def member_choice(self):
@@ -635,7 +632,9 @@ class Member:
             choice = int(input('Select your choice: '))
         if choice == 1:
             project_table = my_DB.search('project_table')
-            for i in project_table.filter(lambda x: x['Leader'] == self.id).table:
+            project_table_filter = project_table.filter(lambda x: x['Member1'] == self.id or x['Member2'] == self.id)
+            for i in project_table_filter.table:
+                self.lead_id = i['Leader']
                 print(f"Project ID: {i['ProjectID']} Title: {i['Title']:2>}")
                 self.project_id = i['ProjectID']
 
@@ -682,8 +681,9 @@ class Member:
         project_evaluate = project_evaluate.filter(lambda x: x['Leader'] == self.lead_id).table
         project = my_DB.search('project_table')
         project_table = project.filter(lambda x: x['Leader'] == self.lead_id).table
-        if project_evaluate[0]['Score'] == 10:
+        if project_evaluate[0]['Advice'] == "None":
             print('You have full score for your project! This project is finished')
+            print('------------')
         print(f"---Score and Advice--- \n"
               f"ProjectID: {project_evaluate[0]['ProjectID']} \n"
               f"Title: {project_table[0]['Title']} \n"
@@ -861,6 +861,8 @@ class Advisor:
             advice = input('Do you have any advice for leader and member to rectify their project?: ')
             evaluate.update('Advice', advice)
             to_eval_project.update('Status', 'Unfinished')
+        else:
+            to_eval_project.update('Status', 'Finished')
         project_info = self. find_project_advisor()
         print(f"Your evaluation for {project_info[0]['Title']} is finished!")
         print('------------')
@@ -874,8 +876,7 @@ else:
     if val[1] == 'student':
         Student(val[0]).choice_student()
     elif val[1] == 'member':
-        lead_id = search_project(val[0])['Leader']
-        Member(val[0], lead_id).member_choice()
+        Member(val[0]).member_choice()
     elif val[1] == 'leader':
         Leader(val[0]).leader_choice()
     elif val[1] == 'faculty':
@@ -884,6 +885,3 @@ else:
         Advisor(val[0]).advisor_choice()
     elif val[1] == 'admin':
         Admin().admin_choice()
-
-
-
