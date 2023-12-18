@@ -100,6 +100,6 @@
       - trying to print(f'Your evaluation for {project_info[0]['Title']} is finished!').
 
 3. line 757-770: def faculty_check_message(): .
-      for choice 'n' : Error 'list indices must be integers or slices, not str'.
-      - trying to print(f'you deny {lead_id}: {search_project(lead_id)["Title"]} project!').
-      for choice 'y' : program exit automatically.
+      - for choice 'n' : Error 'list indices must be integers or slices, not str'.
+            - trying to print(f'you deny {lead_id}: {search_project(lead_id)["Title"]} project!').
+      - for choice 'y' : program exit automatically.
