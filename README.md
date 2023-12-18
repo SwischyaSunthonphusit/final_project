@@ -34,7 +34,7 @@
  |Leader|See score and advice from advisor|see_evaluate (search)|Leader|100%|
  |Member|Check project detail|project_info (search)|Member|100%|
  |Member|Modify project content|member_check_project|Member|100%|
- |Member|See score and advice from advisor|see_evaluate (search)|Member||100%
+ |Member|See score and advice from advisor|see_evaluate (search)|Member|100%|
  |Faculty|Check message from leader and accept or deny it (if accept, faculty will became advisor)|faculty_check_message (update)|Faculty|100%|
  |Advisor|Check project detail|project_info (search)|Advisor|100%|
  |Advisor|Evaluate project by giving score and some advice|advisor_check_project > evaluate_project (insert, update)|Advisor|100%|
