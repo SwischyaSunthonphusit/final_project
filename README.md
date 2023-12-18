@@ -58,37 +58,47 @@
  | Admin | Append new account in database | create_account (insert) | Admin | 100% |
  |Admin |Delete account in database|remove_account (del)|Admin|100%|
  |Student|Create new project and become leader|insert (create project), update(role)|Student|100% |
- |Student|Check message from leader and accept or deny it (if accept, student will became member)|update (update role, member_request table), append_member|Student|90% |
+ |Student|Check message from leader and accept or deny it (if accept, student will became member)|update (update role, member_request table), append_member|Student|100% |
  |Leader|check project detail|project_info (search)|Leader|100% |
  |Leader|modify their project (rename title)|lead_check_project (update)|Leader|100%|
  |Leader|modify their project (modify content)|lead_check_project (update)|Leader|100%|
  |Leader|modify their project (finished this project (to wait for evaluation from advisor)|lead_check_project (update)|Leader|100%|
- |Leader|Send a message to student to be member|update (for member_request function)|Leader|85%|
+ |Leader|Send a message to student to be member|update (for member_request function)|Leader|100%|
  |Leader|Send a message to faculty to be advisor|update (for advisor_request function)|Leader|100%|
  |Leader|See score and advice from advisor|see_evaluate (search)|Leader|100%|
  |Member|Check project detail|project_info (search)|Member|100%|
- |Member|Modify project content|member_check_project|Member|95%|
+ |Member|Modify project content|member_check_project|Member|100%|
  |Member|See score and advice from advisor|see_evaluate (search)|Member|100%|
- |Faculty|Check message from leader and accept or deny it (if accept, faculty will became advisor)|faculty_check_message (update)|Faculty|85%|
- |Advisor|Check project detail|project_info (search)|Advisor|100%|
- |Advisor|Evaluate project by giving score and some advice|advisor_check_project > evaluate_project (insert, update)|Advisor|100%|
+ |Faculty|Check message from leader and accept or deny it (if accept, faculty will became advisor)|faculty_check_message (update)|Faculty|30% (error)|
+ |Advisor|Check project detail|project_info (search)|Advisor|80% (you have to get project id from table)|
+ |Advisor|Evaluate project by giving score and some advice|advisor_check_project > evaluate_project (insert, update)|Advisor|30% (error)|
 
  ## missing features and outstanding bugs
 
-1.Enter 0 more than 1 time to exit program (maybe n to deny function): (program problem)
-      - In this case, it's not a bug but my program has some problem, so maybe sometimes in some function, you have to enter 0 or 'n' more than 1 time to exit program.
-      
-2.line 549 : Class Leader (late commit)
+ - Late Commit
+1.line 549 : Class Leader (late commit)
       - if advice from advisor == None : Project is successfull and no correction is required.
       
-3.line 683 : Class Member (late commit)
+2.line 683 : Class Member (late commit)
       - if advice from advisor == None : Project is successfull and no correction is required.
 
-4.line 77 : def Member_send_request() (late commit)
+3.line 77 : def Member_send_request() (late commit)
       - make input member ID function properly.
 
-5.line 634 - 639 : Class Member (late commit)
+4.line 634 - 639 : Class Member (late commit)
       - when select 'Project'choice, system display member project brief correctly.
 
-6.line 864 : Class Advisor (late commit)
+5.line 864 : Class Advisor (late commit)
     - If advisor score project is 10, project_evaluate table status update to 'Finished'.
+
+- Outstanding bug
+1.Enter 0 more than 1 time to exit program (maybe n to deny function): (program problem)
+      - In this case, it's not a bug but my program has some problem, so maybe sometimes in some function, you have to enter 0 or 'n' more than 1 time to exit program.
+
+2.line 872: def evaluate_project() : Error 'list index out of range'
+      - trying to print(f'Your evaluation for {project_info[0]['Title']} is finished!')
+
+3.line 757-770: def faculty_check_message(): 
+      for choice 'n' : Error 'list indices must be integers or slices, not str'
+      - trying to print(f'you deny {lead_id}: {search_project(lead_id)["Title"]} project!')
+      for choice 'y' : program exit automatically 
