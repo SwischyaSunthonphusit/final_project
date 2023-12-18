@@ -1,6 +1,6 @@
 # Final project for 2023's 219114/115 Programming I
 ## File
-  1. project_manage.py : file for
+  1. project_manage.py : for manage this project
   2. Database.py: Manages database interactions
   3. all csv file: Contains the member_request.csv, advisor_request.csv, project_table.csv and project_evaluate.csv for collect information
 
