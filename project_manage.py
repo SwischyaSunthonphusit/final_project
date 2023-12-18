@@ -775,7 +775,7 @@ class Advisor:
               f'Your role now is Advisor. \n'
               f'What do you want to do? \n'
               f'1. Check Project\n'
-              f'2. Evaluate Project'
+              f'2. Evaluate Project \n'
               f'0. Exit')
         choice = int(input('Select your choice: '))
         while choice != 0 and choice != 1 and choice != 2:
