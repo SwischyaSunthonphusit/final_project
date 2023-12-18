@@ -845,8 +845,8 @@ class Advisor:
         project = my_DB.search('project_table')
         to_eval_project = project.filter(lambda x: x['Status'] == 'Pending').filter(lambda x: x['Advisor'] == self.id)
         print('----Evaluation----')
-        score = input(f'From 1 to 10, what score you think this project should have? '
-                      f'(if this project is perfect, please score it 10): ')
+        score = int(input(f'From 1 to 10, what score you think this project should have? '
+                      f'(if this project is perfect, please score it 10): '))
         evaluate = my_DB.search('project_evaluate')
         advisor_project = self.find_project_advisor()
         leader = advisor_project[0]['Leader']
