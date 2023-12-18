@@ -5,12 +5,12 @@
   3. all csv file: Contains the member_request.csv, advisor_request.csv, project_table.csv and project_evaluate.csv for collect information
 
 ## Class
-  1.Admin: for people who login as admin, this class will make user can use specific function of admin.
-  2.Student: for people who login as student, this class will make user can use specific function of student.
-  3.Member: from student who accept the request to be member, they can use specific function of member.
-  4.Leader: from student who create project and become leader, they can use specific function of leader.
-  5.Faculty: for people  who login as faculty, this class will make user can use specific function of faculty.
-  6.Advisor: from faculty who accept to be advisor for student's project, they can use specific function of advisor.
+  1. Admin : for people who login as admin, this class will make user can use specific function of admin.
+  2. Student : for people who login as student, this class will make user can use specific function of student.
+  3. Member : from student who accept the request to be member, they can use specific function of member.
+  4. Leader : from student who create project and become leader, they can use specific function of leader.
+  5. Faculty : for people  who login as faculty, this class will make user can use specific function of faculty.
+  6. Advisor : from faculty who accept to be advisor for student's project, they can use specific function of advisor.
 
 ## How to use my program?
 - clone this repository
